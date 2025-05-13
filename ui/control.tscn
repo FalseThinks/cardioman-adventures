@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvr6m40l4bgj8"]
+
+[ext_resource type="Script" uid="uid://buvoks8ulwe6i" path="res://ui/UI.gd" id="1_rwsqr"]
+[ext_resource type="Script" uid="uid://cc020ro6srw34" path="res://ui/stamina_bar.gd" id="2_qh227"]
+[ext_resource type="Script" uid="uid://d0ccycv8xthl5" path="res://ui/coin_label.gd" id="3_2mc8b"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4c57u"]
+font_size = 22
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -74.0
+offset_top = 504.0
+offset_right = -34.0
+offset_bottom = 544.0
+script = ExtResource("1_rwsqr")
+metadata/_edit_use_anchors_ = true
+
+[node name="StaminaBar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 2.5
+anchor_top = -11.225
+anchor_right = 9.05
+anchor_bottom = -10.375
+offset_right = 4.0
+offset_bottom = 27.0
+script = ExtResource("2_qh227")
+metadata/_edit_use_anchors_ = true
+
+[node name="CoinLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 25.8
+anchor_top = -10.725
+anchor_right = 29.25
+anchor_bottom = -10.175
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Coins: 0"
+label_settings = SubResource("LabelSettings_4c57u")
+horizontal_alignment = 1
+script = ExtResource("3_2mc8b")
+metadata/_edit_use_anchors_ = true

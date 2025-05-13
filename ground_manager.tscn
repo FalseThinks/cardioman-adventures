@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dik4ge773agjy"]
+
+[ext_resource type="Script" uid="uid://1x0m700u7hqo" path="res://ground_manager.gd" id="1_66e4c"]
+[ext_resource type="PackedScene" uid="uid://c0cfn16st8afr" path="res://ground.tscn" id="2_1di7t"]
+
+[node name="GroundManager" type="Node2D"]
+script = ExtResource("1_66e4c")
+
+[node name="Ground1" parent="." instance=ExtResource("2_1di7t")]
+position = Vector2(-600, 405)
+script = null
+
+[node name="Ground2" parent="." instance=ExtResource("2_1di7t")]
+position = Vector2(586, 405)
+script = null
