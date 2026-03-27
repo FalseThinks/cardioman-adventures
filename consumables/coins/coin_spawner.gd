@@ -1,7 +1,8 @@
 extends Node2D
 
 var obstacle_scene = preload("res://objects/static/obstacle.tscn")
-var coin_scene = preload("res://consumables/coins/coin.tscn")  # preload your coin scene
+var coin_scene = preload("res://consumables/coins/coin.tscn")
+var tofu_scene = preload("res://consumables/tofu.tscn")
 
 var spawn_timer = 1.5
 var elapsed_time = 0
@@ -39,30 +40,29 @@ func spawn_obstacle():
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		var screen_width = get_viewport().get_visible_rect().size.x
-		var spawn_x = player.global_position.x + screen_width * 1.1
-		var ground_y = player.global_position.y
-
-		obstacle.position = Vector2(spawn_x, ground_y)
-		last_obstacle_position = obstacle.position
+		var spawn_x = player.global_position.x + screen_width * 1.5
+		var ground_y = player.floor_y
+		add_child(obstacle)
+		obstacle.global_position = Vector2(spawn_x, ground_y)
+		last_obstacle_position = obstacle.global_position
 	else:
-		obstacle.position = Vector2(1200, 500)
-
-	add_child(obstacle)
+		add_child(obstacle)
+		obstacle.global_position = Vector2(1200, 500)
 
 	# 🎲 Try to spawn a coin near this obstacle
 	if randf() < coin_chance:
-		spawn_coin_near(obstacle.position)
+		spawn_coin_near(obstacle.global_position)
 
 func spawn_coin_near(position: Vector2):
-	var coin = coin_scene.instantiate()
+	var item
+	if randf() < 0.25:
+		item = tofu_scene.instantiate()
+	else:
+		item = coin_scene.instantiate()
+		
 	# Random offset above the obstacle
 	var y_offset = -randf_range(50, 120)
-	coin.position = position + Vector2(0, y_offset)
-	add_child(coin)
+	item.global_position = position + Vector2(0, y_offset)
+	add_child(item)
 
-	# Optional: connect collected signal if coin uses it
-	if coin.has_signal("coin_collected"):
-		coin.connect("coin_collected", _on_coin_collected)
-
-func _on_coin_collected():
-	global.add_coin()
+	pass

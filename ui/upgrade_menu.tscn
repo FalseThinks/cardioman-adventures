@@ -1,0 +1,151 @@
+[gd_scene load_steps=5 format=3 uid="uid://bx5p2v2l2q"]
+
+[ext_resource type="Script" path="res://ui/upgrade_menu.gd" id="1_upgrade"]
+[ext_resource type="Texture2D" path="res://assets/stamina_boot.png" id="2_boot"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Panel"]
+bg_color = Color(0.121569, 0.121569, 0.160784, 0.941176)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.360784, 0.819608, 0.380392, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Btn"]
+bg_color = Color(0.2, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_top = 4.0
+expand_margin_bottom = 4.0
+
+[node name="UpgradeMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_upgrade")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.8)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -300.0
+offset_right = 220.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_Panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 25.0
+offset_right = -30.0
+offset_bottom = -25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="BootIcon" type="TextureRect" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+texture = ExtResource("2_boot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="CoinsLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Coins: 0"
+horizontal_alignment = 1
+
+[node name="Spacing" type="Control" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="BtnVelocity" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Velocity+ (Lvl 0) - Cost: 10"
+
+[node name="BtnStamina" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Max Stamina+ (Lvl 0) - Cost: 10"
+
+[node name="BtnDmgRed" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Dmg Reduction+ (Lvl 0) - Cost: 10"
+
+[node name="BtnDashCost" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Dash Cost- (Lvl 0) - Cost: 10"
+
+[node name="BtnJumpCost" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Jump Cost- (Lvl 0) - Cost: 10"
+
+[node name="BtnDashCD" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Dash CD- (Lvl 0) - Cost: 10"
+
+[node name="BtnApple" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+text = "Apple Recovery+ (Lvl 0) - Cost: 10"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnPlayAgain" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.670588, 1, 0.690196, 1)
+theme_override_font_sizes/font_size = 22
+text = "PLAY AGAIN"
+
+[connection signal="pressed" from="Panel/VBoxContainer/BtnVelocity" to="." method="_on_BtnVelocity_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnStamina" to="." method="_on_BtnStamina_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnDmgRed" to="." method="_on_BtnDmgRed_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnDashCost" to="." method="_on_BtnDashCost_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnJumpCost" to="." method="_on_BtnJumpCost_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnDashCD" to="." method="_on_BtnDashCD_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnApple" to="." method="_on_BtnApple_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/BtnPlayAgain" to="." method="_on_BtnPlayAgain_pressed"]

@@ -1,66 +1,79 @@
 extends Node2D
 
 var obstacle_scene = preload("res://objects/static/obstacle.tscn")
+var coin_scene = preload("res://consumables/coins/coin.tscn")
+var tofu_scene = preload("res://consumables/tofu.tscn")
 var spawn_timer = 1.5
 var elapsed_time = 0
-var min_distance_between_obstacles = 100  # Minimum horizontal distance
-var last_obstacle_position = Vector2.ZERO
-var consecutive_obstacles = 0  # To track consecutive obstacles spawned
-var max_consecutive_obstacles = 3  # Max obstacles in a row before space is required
+var min_distance_between_batches = 1500  # Distance between batches of obstacles
+var last_spawn_x = 0.0
+var spawn_y = 470.0  # Fixed position just above the floor
+var obstacle_width = 0
 
 func _ready():
 	var player = get_tree().get_first_node_in_group("player")
+
 	if player:
-		last_obstacle_position = Vector2(player.global_position.x + 1200, 2)
+		# Store the player's initial X position when the scene starts
+		last_spawn_x = player.global_position.x + 800
+
+	# Set the spawn_y to the fixed value above the floor
+	# If you want to calculate the height dynamically, make sure it's set correctly (e.g., floor height).
+	# Here it's fixed at 550 for now.
 
 func _process(delta):
 	elapsed_time += delta
 
 	if elapsed_time >= spawn_timer:
-		if can_spawn_obstacle():
-			spawn_obstacle()
+		var player = get_tree().get_first_node_in_group("player")
+		if not player:
+			return
+
+		# Get screen width for spawn position calculation
+		var screen_width = get_viewport().get_visible_rect().size.x
+		var spawn_x = player.global_position.x + screen_width * 1.5
+
+		# Avoid multiple spawn batches happening too close to each other
+		if spawn_x >= last_spawn_x + min_distance_between_batches:
+			spawn_obstacle_batch(spawn_x)
+			last_spawn_x = spawn_x
 			elapsed_time = 0
-			spawn_timer = randf_range(1.0, 2.5)
+			spawn_timer = randf_range(1.0, 2.5)  # Randomize spawn interval for variety
 
-func can_spawn_obstacle() -> bool:
+func spawn_obstacle_batch(start_x: float):
+	var obstacle_count = randi_range(1, 2)  # Randomly spawn 1 to 2 obstacles to reduce clutter
 	var player = get_tree().get_first_node_in_group("player")
-	if not player:
-		return false
+	var ground_y = player.floor_y if player else 823.0  # Safe dynamic checking
+	
+	# Ensure obstacles spawn at a fixed height
+	for i in range(obstacle_count):
+		var obstacle = obstacle_scene.instantiate()
+		
+		# Give a massive flat buffer between spawned batch nodes to prevent overlapping
+		var offset_x = (i * randf_range(700, 1100)) + 600
+		
+		# Set is_rocket BEFORE add_child so _ready() can configure the rocket properly
+		if randf() < 0.3:
+			obstacle.is_rocket = true
+			
+		add_child(obstacle) # Add the obstacle to the scene
+		
+		obstacle.global_position = Vector2(start_x + offset_x, ground_y + 10)  # Anchor to player feet
+		obstacle.visible = true
 
-	var min_x_position = last_obstacle_position.x + min_distance_between_obstacles
-	var next_spawn_x = player.global_position.x + get_viewport().get_visible_rect().size.x * 0.7
+		var sprite_node = obstacle.find_child("Sprite2D")
+		if sprite_node:
+			sprite_node.visible = true
 
-	# Ensure we don't spawn too soon, allowing for at least the minimum distance
-	return next_spawn_x > min_x_position and consecutive_obstacles < max_consecutive_obstacles
+		if randf() < 0.4 and not obstacle.is_rocket:
+			var item
+			if randf() < 0.25:
+				item = tofu_scene.instantiate()
+			else:
+				item = coin_scene.instantiate()
+				
+			item.position = Vector2(0, -randf_range(50, 120))
+			obstacle.add_child(item)
 
-func spawn_obstacle():
-	var player = get_tree().get_first_node_in_group("player")
-	if not player:
-		return
-
-	# Calculate spawn position based on player
-	var screen_width = get_viewport().get_visible_rect().size.x
-	var spawn_x = player.global_position.x + screen_width * 0.7
-	var spawn_y = 2  # Use the floor Y position for consistency
-
-	# Prevent overlap: Make sure we are not spawning too close to the last obstacle
-	if spawn_x <= last_obstacle_position.x + min_distance_between_obstacles:
-		return
-
-	var obstacle = obstacle_scene.instantiate()
-	obstacle.position = Vector2(spawn_x, spawn_y)
-	obstacle.visible = true
-
-	if obstacle.has_node("Sprite2D"):
-		obstacle.get_node("Sprite2D").visible = true
-
-	add_child(obstacle)
-
-	# Update last obstacle position and reset consecutive obstacle count
-	last_obstacle_position = obstacle.global_position
-	consecutive_obstacles += 1
-
-	# If we spawn 3 obstacles in a row, reset the counter and allow a bigger gap for the next set
-	if consecutive_obstacles >= max_consecutive_obstacles:
-		consecutive_obstacles = 0
-		last_obstacle_position.x += min_distance_between_obstacles * 3  # Add extra distance to avoid overlap
+		# Add the obstacle to the scene
+		# Removed duplicate add_child(obstacle)

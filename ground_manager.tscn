@@ -7,9 +7,13 @@
 script = ExtResource("1_66e4c")
 
 [node name="Ground1" parent="." instance=ExtResource("2_1di7t")]
-position = Vector2(-600, 405)
+position = Vector2(0, 405)
 script = null
 
 [node name="Ground2" parent="." instance=ExtResource("2_1di7t")]
-position = Vector2(586, 405)
+position = Vector2(1072, 405)
+script = null
+
+[node name="Ground3" parent="." instance=ExtResource("2_1di7t")]
+position = Vector2(2144, 405)
 script = null

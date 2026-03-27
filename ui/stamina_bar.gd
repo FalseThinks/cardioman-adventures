@@ -1,4 +1,4 @@
-extends ProgressBar
+extends TextureProgressBar
 
 var flash_color: Color = Color.RED
 var flash_timer := 0.0
@@ -16,11 +16,13 @@ func _ready():
 		add_theme_stylebox_override("fill", style)
 
 # Update the stamina bar, where current_value is the current stamina and max_val is the max stamina
-func update_stamina_bar(current_value: float, max_val: float):
-	value = current_value  # Update the value of the bar
-	max_value = max_val    # Update the max value of the bar
-
-	var percent = clamp(current_value / max_val, 0.0, 1.0)
+func update_stamina_bar(current_stamina, max_stamina):
+	value = current_stamina
+	max_value = max_stamina
+	var percent_label = get_node_or_null("../StaminaPercentLabel")
+	if percent_label:
+		percent_label.text = str(round((current_stamina / max_stamina) * 100)) + "%"
+	var percent = clamp(current_stamina / max_stamina, 0.0, 1.0)
 
 	# Get the fill style box
 	var bar_style = get("custom_styles/fill") as StyleBoxFlat

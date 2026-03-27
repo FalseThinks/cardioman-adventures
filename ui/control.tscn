@@ -1,45 +1,71 @@
-[gd_scene load_steps=5 format=3 uid="uid://cvr6m40l4bgj8"]
+[gd_scene load_steps=6 format=3 uid="uid://cvr6m40l4bgj8"]
 
 [ext_resource type="Script" uid="uid://buvoks8ulwe6i" path="res://ui/UI.gd" id="1_rwsqr"]
 [ext_resource type="Script" uid="uid://cc020ro6srw34" path="res://ui/stamina_bar.gd" id="2_qh227"]
 [ext_resource type="Script" uid="uid://d0ccycv8xthl5" path="res://ui/coin_label.gd" id="3_2mc8b"]
+[ext_resource type="Texture2D" path="res://assets/stamina_boot.png" id="4_boot"]
+[ext_resource type="Texture2D" path="res://assets/custom_dash_icon.png" id="5_custom_dash"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4c57u"]
-font_size = 22
+font_size = 26
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.4)
 
 [node name="Control" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-offset_left = -74.0
-offset_top = 504.0
-offset_right = -34.0
-offset_bottom = 544.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_rwsqr")
-metadata/_edit_use_anchors_ = true
 
-[node name="StaminaBar" type="ProgressBar" parent="."]
+[node name="HBox" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 2.5
-anchor_top = -11.225
-anchor_right = 9.05
-anchor_bottom = -10.375
-offset_right = 4.0
-offset_bottom = 27.0
+offset_right = 700.0
+offset_bottom = 90.0
+theme_override_constants/separation = 16
+
+[node name="StaminaBar" type="TextureProgressBar" parent="HBox"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+size_flags_vertical = 4
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("4_boot")
+texture_progress = ExtResource("4_boot")
+tint_under = Color(0.2, 0.2, 0.2, 0.8)
 script = ExtResource("2_qh227")
-metadata/_edit_use_anchors_ = true
 
-[node name="CoinLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 25.8
-anchor_top = -10.725
-anchor_right = 29.25
-anchor_bottom = -10.175
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="StaminaPercentLabel" type="Label" parent="HBox"]
+layout_mode = 2
+text = "100%"
+label_settings = SubResource("LabelSettings_4c57u")
+
+[node name="CoinLabel" type="Label" parent="HBox"]
+layout_mode = 2
 text = "Coins: 0"
 label_settings = SubResource("LabelSettings_4c57u")
-horizontal_alignment = 1
 script = ExtResource("3_2mc8b")
-metadata/_edit_use_anchors_ = true
+
+[node name="MeterLabel" type="Label" parent="HBox"]
+layout_mode = 2
+text = "0 m"
+label_settings = SubResource("LabelSettings_4c57u")
+
+[node name="DashCD" type="TextureProgressBar" parent="HBox"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+size_flags_vertical = 4
+fill_mode = 4
+nine_patch_stretch = false
+texture_under = ExtResource("5_custom_dash")
+texture_progress = ExtResource("5_custom_dash")
+tint_under = Color(0.2, 0.2, 0.2, 0.8)
+tint_progress = Color(1.0, 1.0, 1.0, 1.0)

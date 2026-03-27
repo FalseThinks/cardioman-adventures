@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://txjk5cnhh2jm"]
 
 [ext_resource type="Script" uid="uid://d24nvdwbrh0m0" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Texture2D" uid="uid://di8eqebmn5yb1" path="res://assets/cayePng.png" id="2_i3pqv"]
+[ext_resource type="Texture2D" path="res://assets/tracksuit_run.png" id="2_banana"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
 size = Vector2(69, 136)
@@ -14,9 +14,12 @@ script = ExtResource("1_onrkg")
 metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(2.99994, -2.00008)
-scale = Vector2(0.28, 0.296)
-texture = ExtResource("2_i3pqv")
+texture_filter = 2
+position = Vector2(0, -68)
+scale = Vector2(0.48, 0.64)
+texture = ExtResource("2_banana")
+hframes = 4
+vframes = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, 2)
@@ -25,8 +28,8 @@ shape = SubResource("RectangleShape2D_hqtel")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(4, -4)
 limit_left = 0
-limit_smoothed = true
-position_smoothing_enabled = true
+	position_smoothing_enabled = false
+	position_smoothing_speed = 10.0
 
 [node name="DashHitbox" type="Area2D" parent="."]
 position = Vector2(-1, 0)

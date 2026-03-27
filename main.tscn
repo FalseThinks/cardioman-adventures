@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c3akytwlqvt2a"]
+[gd_scene format=3 uid="uid://c3akytwlqvt2a"]
 
 [ext_resource type="PackedScene" uid="uid://yie75pgxdjfa" path="res://objects/static/obstacle.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://txjk5cnhh2jm" path="res://player.tscn" id="1_272bh"]
@@ -7,44 +7,39 @@
 [ext_resource type="PackedScene" uid="uid://bjw5wbv81prnp" path="res://parallax_background.tscn" id="5_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://dik4ge773agjy" path="res://ground_manager.tscn" id="6_w48qg"]
 [ext_resource type="Script" uid="uid://cvyj2royum8vf" path="res://objects/static/object_static_spawner.gd" id="8_vivmo"]
-[ext_resource type="Script" uid="uid://c145ulklm1r7e" path="res://consumables/coins/coin_spawner.gd" id="10_2cqfq"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1171106828]
 
-[node name="Player" parent="." instance=ExtResource("1_272bh")]
+[node name="Player" parent="." unique_id=674042007 instance=ExtResource("1_272bh")]
 position = Vector2(571, 425)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=630823583]
 
-[node name="Control" parent="CanvasLayer" instance=ExtResource("2_5vw27")]
+[node name="Control" parent="CanvasLayer" unique_id=831525393 instance=ExtResource("2_5vw27")]
 
-[node name="ParallaxBackground" parent="CanvasLayer" instance=ExtResource("5_ycdy4")]
+[node name="ParallaxBackground" parent="CanvasLayer" unique_id=1364119968 instance=ExtResource("5_ycdy4")]
 
-[node name="GroundManager" parent="." instance=ExtResource("6_w48qg")]
+[node name="GroundManager" parent="." unique_id=739149729 instance=ExtResource("6_w48qg")]
 position = Vector2(621, -395)
 
-[node name="ObjectsManager" type="Node2D" parent="."]
+[node name="ObjectsManager" type="Node2D" parent="." unique_id=795164734]
 position = Vector2(768, -410)
 
-[node name="ObstaclesManager" type="Node2D" parent="ObjectsManager"]
+[node name="ObstaclesManager" type="Node2D" parent="ObjectsManager" unique_id=2143126908]
 position = Vector2(-11, -1)
 
-[node name="StaticObstaclesManager" type="Node2D" parent="ObjectsManager/ObstaclesManager"]
+[node name="StaticObstaclesManager" type="Node2D" parent="ObjectsManager/ObstaclesManager" unique_id=1037684234]
 position = Vector2(2, 4)
 
-[node name="Tobacco" parent="ObjectsManager/ObstaclesManager/StaticObstaclesManager" instance=ExtResource("1_0xm2m")]
-position = Vector2(391, 823)
+[node name="Tobacco" parent="ObjectsManager/ObstaclesManager/StaticObstaclesManager" unique_id=725806502 instance=ExtResource("1_0xm2m")]
+position = Vector2(392, 823)
 
-[node name="StaticObjectsSpawner" type="Node2D" parent="ObjectsManager/ObstaclesManager/StaticObstaclesManager"]
+[node name="StaticObjectsSpawner" type="Node2D" parent="ObjectsManager/ObstaclesManager/StaticObstaclesManager" unique_id=1418047307]
 position = Vector2(1775, 354)
 script = ExtResource("8_vivmo")
 
-[node name="ConsumablesManager" type="Node2D" parent="ObjectsManager"]
+[node name="ConsumablesManager" type="Node2D" parent="ObjectsManager" unique_id=1762851362]
 position = Vector2(-16, 1)
 
-[node name="Coin" parent="ObjectsManager/ConsumablesManager" instance=ExtResource("2_h2yge")]
+[node name="Coin" parent="ObjectsManager/ConsumablesManager" unique_id=371694055 instance=ExtResource("2_h2yge")]
 position = Vector2(293, 834)
-
-[node name="ConsumablesSpawner" type="Node2D" parent="ObjectsManager/ConsumablesManager"]
-position = Vector2(1767, 179)
-script = ExtResource("10_2cqfq")

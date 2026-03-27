@@ -1,22 +1,25 @@
 [gd_scene load_steps=4 format=3 uid="uid://c0cfn16st8afr"]
 
 [ext_resource type="Script" uid="uid://cx0pf0j81trem" path="res://ground_1.gd" id="1_yh8r4"]
+[ext_resource type="Texture2D" path="res://assets/floor_texture.png" id="2_floor"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
-size = Vector2(1487, 184)
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_7mycd"]
-specular_color = Color(0, 0, 1, 1)
+size = Vector2(1072, 184)
 
 [node name="Ground1" type="StaticBody2D"]
 script = ExtResource("1_yh8r4")
+ground_width = 1072.0
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(742.5, 583)
-shape = SubResource("RectangleShape2D_lquwl")
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+position = Vector2(0, 491)
+texture = ExtResource("2_floor")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 1072, 320)
 
-[node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D"]
-position = Vector2(-11.25, 34.5)
-scale = Vector2(1511.5, 253)
-texture = SubResource("CanvasTexture_7mycd")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(536, 583)
+shape = SubResource("RectangleShape2D_lquwl")

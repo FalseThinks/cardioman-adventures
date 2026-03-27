@@ -5,6 +5,7 @@ extends StaticBody2D
 @onready var player = get_tree().get_first_node_in_group("player")
 
 func _ready():
+	add_to_group("ground");
 	# Get the width from the sprite if not set
 	if ground_width == 0 and $CollisionShape2D/Sprite2D:
 		ground_width = $CollisionShape2D/Sprite2D.texture.get_width()
@@ -13,6 +14,7 @@ func _ready():
 	if not player:
 		await get_tree().process_frame
 		player = get_tree().get_first_node_in_group("player")
+		
 
 func _process(_delta):
 	if not player:
