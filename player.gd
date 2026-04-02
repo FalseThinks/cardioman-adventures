@@ -1,9 +1,19 @@
 extends CharacterBody2D
 
-@onready var tex_run = preload("res://assets/tracksuit_run.png")
-@onready var tex_jump = preload("res://assets/tracksuit_jump.png")
-@onready var tex_dash = preload("res://assets/tracksuit_dash.png")
-@onready var tex_double_jump = preload("res://assets/tracksuit_double_jump.png")
+# Skin system — add folders under assets/skins/<skin_name>/ with run.png, jump.png, dash.png, double_jump.png
+const SKINS := {
+	"default": {
+		"run": "res://assets/tracksuit_run.png",
+		"jump": "res://assets/tracksuit_jump.png",
+		"dash": "res://assets/tracksuit_dash.png",
+		"double_jump": "res://assets/tracksuit_double_jump.png"
+	}
+}
+
+var tex_run: Texture2D
+var tex_jump: Texture2D
+var tex_dash: Texture2D
+var tex_double_jump: Texture2D
 # === Movement ===
 var speed = 300
 var jump_power = -600
@@ -20,7 +30,7 @@ var is_dashing = false
 var can_double_jump = false
 var is_double_jumping = false 
 var flip_tween: Tween = null
-var floor_y: float = 823.0 # Track actual floor globally
+var floor_y: float = global.FLOOR_Y
 
 # === Stamina & Dash UI ===
 var is_game_over = false
@@ -39,8 +49,16 @@ var stamina_penalty_object = 20
 # === Camera ===
 @onready var camera = $Camera2D
 
-# === Dash Hitbox === (optional, not used directly here)
+# === Dash Hitbox ===
 @onready var dash_hitbox = $DashHitbox
+
+func _load_skin():
+	var skin_key = global.current_skin if global.current_skin in SKINS else "default"
+	var skin = SKINS[skin_key]
+	tex_run = load(skin["run"])
+	tex_jump = load(skin["jump"])
+	tex_dash = load(skin["dash"])
+	tex_double_jump = load(skin["double_jump"])
 
 # === Invulnerability ===
 var is_invulnerable = false
@@ -48,6 +66,8 @@ var invulnerability_time = 1.5
 var blink_timer = null
 
 func _ready():
+	_load_skin()
+	global.start_run()
 	speed = 300 + global.velocity_level * 50
 	max_stamina = 500 + global.stamina_level * 100
 	stamina_penalty_object = max(5, 20 - global.dmg_reduction_level * 3)
@@ -172,10 +192,12 @@ func _physics_process(delta):
 		if is_on_floor():
 			velocity.y = jump_power
 			current_stamina -= jump_stamina_cost
+			audio_manager.play_sfx("jump")
 		elif can_double_jump:
 			velocity.y = jump_power
 			current_stamina -= jump_stamina_cost
 			can_double_jump = false
+			audio_manager.play_sfx("double_jump")
 			do_flip()
 
 	# === Dashing ===
@@ -191,49 +213,40 @@ func _physics_process(delta):
 		trigger_game_over()
 
 
-	# Apply movement and handle collisions
-	var collision = move_and_collide(velocity * delta, true) # Test collision only
-	if collision:
-		var collider = collision.get_collider()
-		if collider is StaticBody2D and collider.has_method("destroy"):
-			var normal = collision.get_normal()
-			
-			# Handle different collision scenarios based on direction and player state
-			if is_dashing:
-				# When dashing, destroy obstacles regardless of direction
-				collider.destroy()
-			elif is_invulnerable:
-				# During invulnerability, only destroy obstacles on LEFT collision (frontal)
-				# Normal.x > 0 means collision from the left
-				if normal.x > 0:
-					collider.destroy()
-			else:
-				# Not dashing or invulnerable, take damage only from frontal collision
-				if normal.x > 0:
-					take_damage()
-					collider.destroy()
-	
-	# Actually move the player
 	move_and_slide()
 
 func take_damage():
-	print("Taking damage from obstacle/projectile!")
 	current_stamina -= stamina_penalty_object
 	stamina_bar.flash_stamina(Color.RED)
 	start_invulnerability()
+	shake_camera(8.0, 0.3)
+	hit_freeze(0.05)
+	audio_manager.play_sfx("hit")
+
+func shake_camera(intensity: float, duration: float):
+	var steps = int(duration / 0.04)
+	var tween = get_tree().create_tween()
+	for i in range(steps):
+		tween.tween_property($Camera2D, "offset:y", randf_range(-intensity, intensity), 0.04)
+	tween.tween_property($Camera2D, "offset:y", 0.0, 0.04)
+
+func hit_freeze(duration: float):
+	if Engine.time_scale != 1.0:
+		return
+	Engine.time_scale = 0.05
+	get_tree().create_timer(duration, true, false, true).timeout.connect(
+		func(): Engine.time_scale = 1.0
+	)
 
 # === Dash ===
 func dash():
 	current_stamina -= dash_stamina_cost
 	can_dash = false
 	is_dashing = true
-	print("Dash started!")
+	audio_manager.play_sfx("dash")
 
-	var dash_timer = get_tree().create_timer(dash_duration)
-	dash_timer.timeout.connect(func():
-		print("Dash ended!")
-		end_dash()
-	)
+
+	get_tree().create_timer(dash_duration).timeout.connect(end_dash)
 
 func end_dash():
 	# Reset dash
@@ -247,31 +260,26 @@ func end_dash():
 func _on_dash_hitbox_body_entered(body: Node) -> void:
 	if body is StaticBody2D and body.has_method("destroy"):
 		if is_dashing:
-			# When dashing, always destroy obstacles
 			global.add_coin()
+			global.add_obstacle_destroyed()
 			body.destroy()
 		else:
 			# Check if collision is from the left side
-			var player_right = global_position.x + $CollisionShape2D.shape.extents.x
-			var obstacle_left = body.global_position.x - body.get_node("CollisionShape2D").shape.extents.x
+			var player_right = global_position.x + $CollisionShape2D.shape.size.x / 2.0
+			var obstacle_left = body.global_position.x - body.get_node("CollisionShape2D").shape.size.x / 2.0
 			var is_frontal_collision = player_right >= obstacle_left and global_position.x < body.global_position.x
 			
 			if is_frontal_collision:
 				if is_invulnerable:
-					# During invulnerability, just destroy the obstacle for left-side collisions
 					body.destroy()
 				else:
-					# Not invulnerable, take damage
-					print("Taking damage from obstacle!")
-					current_stamina -= stamina_penalty_object
-					stamina_bar.flash_stamina(Color.RED)
-					start_invulnerability()
+					take_damage()
 					body.destroy()
 
 # === Invulnerability Blink ===
 func start_invulnerability():
 	is_invulnerable = true
-	print("Player is now invulnerable")
+
 
 	blink_timer = Timer.new()
 	blink_timer.wait_time = 0.15
@@ -283,7 +291,7 @@ func start_invulnerability():
 	await get_tree().create_timer(invulnerability_time).timeout
 
 	is_invulnerable = false
-	print("Player is no longer invulnerable")
+
 
 	if blink_timer:
 		blink_timer.stop()
@@ -299,7 +307,12 @@ func _on_blink_timeout():
 func trigger_game_over():
 	is_game_over = true
 	velocity.x = 0
+	var distance = int(max(0, global_position.x - global.PLAYER_START_X) / global.PIXELS_PER_METER)
+	var summary = global.end_run(distance)
+	audio_manager.play_sfx("game_over")
+	audio_manager.stop_music()
 	var menu = upgrade_menu_scene.instantiate()
+	menu.run_summary = summary
 	$"../CanvasLayer".add_child(menu)
 	get_tree().paused = true
 

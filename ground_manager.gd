@@ -8,13 +8,9 @@ extends Node2D
 
 @onready var pieces = [ground1, ground2, ground3]
 
-var biomes = [
-	Color(1.0, 1.0, 1.0),       # Day Normal / Grass
-	Color(1.0, 0.8, 0.6),       # Sunset / Desert
-	Color(0.4, 0.4, 0.6),       # Night / Blue
-	Color(0.8, 0.6, 0.8),       # Magic / Purple
-	Color(1.0, 0.5, 0.5)        # Lava / Red
-]
+# Music tracks per biome — filenames without extension, placed in audio/music/
+const BIOME_MUSIC := ["biome_day", "biome_sunset", "biome_night", "biome_magic", "biome_lava"]
+var _last_biome_index := -1
 
 func _ready():
 	# Initial positions
@@ -48,10 +44,15 @@ func _physics_process(_delta):
 		leftmost.global_position.x = rightmost.global_position.x + ground_width
 
 	# Update colors
-	var distance = max(0, current_player_x - 571)
-	var meters = int(distance / 100.0)
-	var biome_index = (meters / 500) % biomes.size()
-	var target_color = biomes[biome_index]
+	var distance = max(0, current_player_x - global.PLAYER_START_X)
+	var meters = int(distance / global.PIXELS_PER_METER)
+	var biome_index = (meters / global.BIOME_DISTANCE) % global.BIOME_COLORS.size()
+	var target_color = global.BIOME_COLORS[biome_index]
+
+	# Crossfade music when entering a new biome
+	if biome_index != _last_biome_index:
+		_last_biome_index = biome_index
+		audio_manager.play_music(BIOME_MUSIC[biome_index])
 	
 	for piece in pieces:
 		var sprite = piece.get_node_or_null("Sprite2D")

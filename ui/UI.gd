@@ -16,6 +16,6 @@ func _process(delta):
 	if not player:
 		player = get_tree().get_first_node_in_group("player")
 	if player:
-		var distance = max(0, player.global_position.x - 571)
-		var meters = int(distance / 100.0)
+		var distance = max(0, player.global_position.x - global.PLAYER_START_X)
+		var meters = int(distance / global.PIXELS_PER_METER)
 		meter_label.text = str(meters) + " m"

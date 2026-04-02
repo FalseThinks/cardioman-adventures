@@ -3,14 +3,6 @@ extends ParallaxBackground
 @export var scroll_speed := 50.0
 @export var smooth_factor := 0.1  # Controls how quickly the scrolling adapts
 
-var biomes = [
-	Color(1.0, 1.0, 1.0),       # Day Normal / Grass
-	Color(1.0, 0.8, 0.6),       # Sunset / Desert
-	Color(0.4, 0.4, 0.6),       # Night / Blue
-	Color(0.8, 0.6, 0.8),       # Magic / Purple
-	Color(1.0, 0.5, 0.5)        # Lava / Red
-]
-
 var current_direction := 0.0
 
 func _ready() -> void:
@@ -51,10 +43,10 @@ func _process(delta: float) -> void:
 
 	current_direction = lerp(current_direction, target_direction, smooth_factor)
 
-	var distance = max(0, player.global_position.x - 571)
-	var meters = int(distance / 100.0)
-	var biome_index = (meters / 500) % biomes.size()
-	var target_color = biomes[biome_index]
+	var distance = max(0, player.global_position.x - global.PLAYER_START_X)
+	var meters = int(distance / global.PIXELS_PER_METER)
+	var biome_index = (meters / global.BIOME_DISTANCE) % global.BIOME_COLORS.size()
+	var target_color = global.BIOME_COLORS[biome_index]
 
 	for layer in get_children():
 		if layer is ParallaxLayer:

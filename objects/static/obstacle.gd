@@ -52,7 +52,7 @@ func _physics_process(delta: float) -> void:
 		global_position.x -= scroll_speed * delta
 
 func destroy() -> void:
-	print("Obstacle destroyed!")
+	audio_manager.play_sfx("obstacle_destroy")
 
 	if has_node("CollisionShape2D"):
 		$CollisionShape2D.set_deferred("disabled", true)
