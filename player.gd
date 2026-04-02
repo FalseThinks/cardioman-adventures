@@ -194,23 +194,35 @@ func _physics_process(delta):
 	move_and_slide()
 
 func take_damage():
-	print("Taking damage from obstacle/projectile!")
 	current_stamina -= stamina_penalty_object
 	stamina_bar.flash_stamina(Color.RED)
 	start_invulnerability()
+	shake_camera(8.0, 0.3)
+	hit_freeze(0.05)
+
+func shake_camera(intensity: float, duration: float):
+	var steps = int(duration / 0.04)
+	var tween = get_tree().create_tween()
+	for i in range(steps):
+		tween.tween_property($Camera2D, "offset:y", randf_range(-intensity, intensity), 0.04)
+	tween.tween_property($Camera2D, "offset:y", 0.0, 0.04)
+
+func hit_freeze(duration: float):
+	if Engine.time_scale != 1.0:
+		return
+	Engine.time_scale = 0.05
+	get_tree().create_timer(duration, true, false, true).timeout.connect(
+		func(): Engine.time_scale = 1.0
+	)
 
 # === Dash ===
 func dash():
 	current_stamina -= dash_stamina_cost
 	can_dash = false
 	is_dashing = true
-	print("Dash started!")
 
-	var dash_timer = get_tree().create_timer(dash_duration)
-	dash_timer.timeout.connect(func():
-		print("Dash ended!")
-		end_dash()
-	)
+
+	get_tree().create_timer(dash_duration).timeout.connect(end_dash)
 
 func end_dash():
 	# Reset dash
@@ -235,20 +247,15 @@ func _on_dash_hitbox_body_entered(body: Node) -> void:
 			
 			if is_frontal_collision:
 				if is_invulnerable:
-					# During invulnerability, just destroy the obstacle for left-side collisions
 					body.destroy()
 				else:
-					# Not invulnerable, take damage
-					print("Taking damage from obstacle!")
-					current_stamina -= stamina_penalty_object
-					stamina_bar.flash_stamina(Color.RED)
-					start_invulnerability()
+					take_damage()
 					body.destroy()
 
 # === Invulnerability Blink ===
 func start_invulnerability():
 	is_invulnerable = true
-	print("Player is now invulnerable")
+
 
 	blink_timer = Timer.new()
 	blink_timer.wait_time = 0.15
@@ -260,7 +267,7 @@ func start_invulnerability():
 	await get_tree().create_timer(invulnerability_time).timeout
 
 	is_invulnerable = false
-	print("Player is no longer invulnerable")
+
 
 	if blink_timer:
 		blink_timer.stop()
