@@ -5,6 +5,17 @@ extends Control
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	update_ui()
+	_animate_in()
+
+func _animate_in():
+	modulate.a = 0.0
+	var panel = $Panel
+	panel.scale = Vector2(0.92, 0.92)
+	var tween = get_tree().create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.25)
+	tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.25).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
 func update_ui():
 	coins_label.text = "Coins: " + str(global.coins)
@@ -53,7 +64,10 @@ func try_buy(stat_name: String):
 		global.set_coins(global.coins - cost)
 		global.set(stat_name, current_level + 1)
 		global.save_data()
+		audio_manager.play_sfx("purchase")
 		update_ui()
+	else:
+		audio_manager.play_sfx("purchase_fail")
 
 func _on_BtnPlayAgain_pressed():
 	get_tree().paused = false

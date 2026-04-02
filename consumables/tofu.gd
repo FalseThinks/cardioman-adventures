@@ -24,6 +24,7 @@ func _on_body_entered(body):
 		body.current_stamina = min(body.current_stamina + stamina_heal, body.max_stamina)
 		body.stamina_bar.update_stamina_bar(body.current_stamina, body.max_stamina)
 		_spawn_particles(global_position)
+		audio_manager.play_sfx("heal")
 		queue_free()
 
 func _spawn_particles(pos: Vector2):

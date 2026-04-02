@@ -172,10 +172,12 @@ func _physics_process(delta):
 		if is_on_floor():
 			velocity.y = jump_power
 			current_stamina -= jump_stamina_cost
+			audio_manager.play_sfx("jump")
 		elif can_double_jump:
 			velocity.y = jump_power
 			current_stamina -= jump_stamina_cost
 			can_double_jump = false
+			audio_manager.play_sfx("double_jump")
 			do_flip()
 
 	# === Dashing ===
@@ -199,6 +201,7 @@ func take_damage():
 	start_invulnerability()
 	shake_camera(8.0, 0.3)
 	hit_freeze(0.05)
+	audio_manager.play_sfx("hit")
 
 func shake_camera(intensity: float, duration: float):
 	var steps = int(duration / 0.04)
@@ -220,6 +223,7 @@ func dash():
 	current_stamina -= dash_stamina_cost
 	can_dash = false
 	is_dashing = true
+	audio_manager.play_sfx("dash")
 
 
 	get_tree().create_timer(dash_duration).timeout.connect(end_dash)
@@ -283,6 +287,8 @@ func _on_blink_timeout():
 func trigger_game_over():
 	is_game_over = true
 	velocity.x = 0
+	audio_manager.play_sfx("game_over")
+	audio_manager.stop_music()
 	var menu = upgrade_menu_scene.instantiate()
 	$"../CanvasLayer".add_child(menu)
 	get_tree().paused = true

@@ -22,6 +22,7 @@ func _process(delta):
 func _on_body_entered(body):
 	if body.is_in_group("player"):
 		_spawn_particles(global_position, Color(1.0, 0.85, 0.0))
+		audio_manager.play_sfx("coin_collect")
 		global.add_coin()
 		queue_free()
 

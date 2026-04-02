@@ -9,7 +9,7 @@ func get_params(meters: int) -> Dictionary:
 			"spawn_min": 2.0, "spawn_max": 3.5,
 			"rocket_chance": 0.0,
 			"batch_max": 1,
-			"consumable_chance": 0.30
+			"consumable_chance": 0.90
 		}
 	elif meters < 500:
 		# Normal: original behavior
@@ -17,7 +17,7 @@ func get_params(meters: int) -> Dictionary:
 			"spawn_min": 1.0, "spawn_max": 2.5,
 			"rocket_chance": 0.30,
 			"batch_max": 2,
-			"consumable_chance": 0.40
+			"consumable_chance": 1.0
 		}
 	elif meters < 1000:
 		# Heated: faster spawns, more rockets
@@ -25,7 +25,7 @@ func get_params(meters: int) -> Dictionary:
 			"spawn_min": 0.8, "spawn_max": 2.0,
 			"rocket_chance": 0.40,
 			"batch_max": 2,
-			"consumable_chance": 0.35
+			"consumable_chance": 1.0
 		}
 	elif meters < 2000:
 		# Intense: tight gaps, lots of rockets
@@ -33,7 +33,7 @@ func get_params(meters: int) -> Dictionary:
 			"spawn_min": 0.6, "spawn_max": 1.5,
 			"rocket_chance": 0.50,
 			"batch_max": 2,
-			"consumable_chance": 0.30
+			"consumable_chance": 0.90
 		}
 	else:
 		# Maximum difficulty
@@ -41,5 +41,5 @@ func get_params(meters: int) -> Dictionary:
 			"spawn_min": 0.5, "spawn_max": 1.2,
 			"rocket_chance": 0.60,
 			"batch_max": 2,
-			"consumable_chance": 0.25
+			"consumable_chance": 0.75
 		}
