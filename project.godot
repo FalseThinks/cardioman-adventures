@@ -23,6 +23,7 @@ config/icon="res://icon.svg"
 
 global="*res://global.gd"
 audio_manager="*res://audio_manager.gd"
+achievements="*res://achievements.gd"
 
 [display]
 

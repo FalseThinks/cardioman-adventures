@@ -1,11 +1,56 @@
 extends Control
 
 @onready var coins_label = $Panel/VBoxContainer/CoinsLabel
+@onready var vbox = $Panel/VBoxContainer
+
+# Set by player.gd before adding to scene tree
+var run_summary: Dictionary = {}
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_build_run_summary()
 	update_ui()
 	_animate_in()
+
+func _build_run_summary():
+	if run_summary.is_empty():
+		return
+
+	# Insert summary labels after the "GAME OVER" label (index 1) and before CoinsLabel (index 2)
+	var insert_idx = 2  # after Label("GAME OVER"), before CoinsLabel
+
+	var dist_label = Label.new()
+	dist_label.text = "Distance: " + str(run_summary.get("distance", 0)) + " m"
+	dist_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	dist_label.add_theme_font_size_override("font_size", 16)
+	dist_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(dist_label)
+	vbox.move_child(dist_label, insert_idx)
+
+	var coins_earned = Label.new()
+	coins_earned.text = "Coins earned: " + str(run_summary.get("coins", 0))
+	coins_earned.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	coins_earned.add_theme_font_size_override("font_size", 16)
+	coins_earned.add_theme_color_override("font_color", Color(1.0, 0.85, 0.0))
+	vbox.add_child(coins_earned)
+	vbox.move_child(coins_earned, insert_idx + 1)
+
+	var obs_label = Label.new()
+	obs_label.text = "Obstacles destroyed: " + str(run_summary.get("obstacles", 0))
+	obs_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	obs_label.add_theme_font_size_override("font_size", 16)
+	obs_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(obs_label)
+	vbox.move_child(obs_label, insert_idx + 2)
+
+	if run_summary.get("is_new_best", false):
+		var best_label = Label.new()
+		best_label.text = "NEW BEST!"
+		best_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		best_label.add_theme_font_size_override("font_size", 20)
+		best_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.4))
+		vbox.add_child(best_label)
+		vbox.move_child(best_label, insert_idx + 3)
 
 func _animate_in():
 	modulate.a = 0.0

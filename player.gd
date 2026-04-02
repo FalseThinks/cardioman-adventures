@@ -1,9 +1,19 @@
 extends CharacterBody2D
 
-@onready var tex_run = preload("res://assets/tracksuit_run.png")
-@onready var tex_jump = preload("res://assets/tracksuit_jump.png")
-@onready var tex_dash = preload("res://assets/tracksuit_dash.png")
-@onready var tex_double_jump = preload("res://assets/tracksuit_double_jump.png")
+# Skin system — add folders under assets/skins/<skin_name>/ with run.png, jump.png, dash.png, double_jump.png
+const SKINS := {
+	"default": {
+		"run": "res://assets/tracksuit_run.png",
+		"jump": "res://assets/tracksuit_jump.png",
+		"dash": "res://assets/tracksuit_dash.png",
+		"double_jump": "res://assets/tracksuit_double_jump.png"
+	}
+}
+
+var tex_run: Texture2D
+var tex_jump: Texture2D
+var tex_dash: Texture2D
+var tex_double_jump: Texture2D
 # === Movement ===
 var speed = 300
 var jump_power = -600
@@ -39,8 +49,16 @@ var stamina_penalty_object = 20
 # === Camera ===
 @onready var camera = $Camera2D
 
-# === Dash Hitbox === (optional, not used directly here)
+# === Dash Hitbox ===
 @onready var dash_hitbox = $DashHitbox
+
+func _load_skin():
+	var skin_key = global.current_skin if global.current_skin in SKINS else "default"
+	var skin = SKINS[skin_key]
+	tex_run = load(skin["run"])
+	tex_jump = load(skin["jump"])
+	tex_dash = load(skin["dash"])
+	tex_double_jump = load(skin["double_jump"])
 
 # === Invulnerability ===
 var is_invulnerable = false
@@ -48,6 +66,8 @@ var invulnerability_time = 1.5
 var blink_timer = null
 
 func _ready():
+	_load_skin()
+	global.start_run()
 	speed = 300 + global.velocity_level * 50
 	max_stamina = 500 + global.stamina_level * 100
 	stamina_penalty_object = max(5, 20 - global.dmg_reduction_level * 3)
@@ -240,8 +260,8 @@ func end_dash():
 func _on_dash_hitbox_body_entered(body: Node) -> void:
 	if body is StaticBody2D and body.has_method("destroy"):
 		if is_dashing:
-			# When dashing, always destroy obstacles
 			global.add_coin()
+			global.add_obstacle_destroyed()
 			body.destroy()
 		else:
 			# Check if collision is from the left side
@@ -287,9 +307,12 @@ func _on_blink_timeout():
 func trigger_game_over():
 	is_game_over = true
 	velocity.x = 0
+	var distance = int(max(0, global_position.x - global.PLAYER_START_X) / global.PIXELS_PER_METER)
+	var summary = global.end_run(distance)
 	audio_manager.play_sfx("game_over")
 	audio_manager.stop_music()
 	var menu = upgrade_menu_scene.instantiate()
+	menu.run_summary = summary
 	$"../CanvasLayer".add_child(menu)
 	get_tree().paused = true
 

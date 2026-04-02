@@ -165,6 +165,18 @@ theme_override_colors/font_color = Color(0.670588, 1, 0.690196, 1)
 theme_override_font_sizes/font_size = 22
 text = "PLAY"
 
+[node name="BtnAchievements" type="Button" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+theme_override_font_sizes/font_size = 16
+text = "ACHIEVEMENTS"
+
+[node name="BtnSkins" type="Button" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
+theme_override_font_sizes/font_size = 16
+text = "SKINS"
+
 [node name="BtnOptions" type="Button" parent="MainPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
@@ -218,6 +230,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_Btn")
 text = "BACK"
 
 [connection signal="pressed" from="MainPanel/VBoxContainer/BtnPlay" to="." method="_on_BtnPlay_pressed"]
+[connection signal="pressed" from="MainPanel/VBoxContainer/BtnAchievements" to="." method="_on_BtnAchievements_pressed"]
+[connection signal="pressed" from="MainPanel/VBoxContainer/BtnSkins" to="." method="_on_BtnSkins_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/BtnOptions" to="." method="_on_BtnOptions_pressed"]
 [connection signal="toggled" from="OptionsPanel/VBoxContainer/SoundToggle" to="." method="_on_SoundToggle_toggled"]
 [connection signal="pressed" from="OptionsPanel/VBoxContainer/BtnBack" to="." method="_on_BtnBack_pressed"]
