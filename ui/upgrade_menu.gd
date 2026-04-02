@@ -44,6 +44,5 @@ func try_buy(stat_name: String):
 		update_ui()
 
 func _on_BtnPlayAgain_pressed():
-	# Allow game to run again
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://ui/start_menu.tscn")

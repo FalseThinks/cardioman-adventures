@@ -11,6 +11,7 @@ var dash_cost_level = 0
 var jump_cost_level = 0
 var dash_cd_level = 0
 var apple_level = 0
+var sound_muted = false
 
 const SAVE_PATH = "user://savegame.save"
 
@@ -38,7 +39,8 @@ func save_data():
 			"dash_cost_level": dash_cost_level,
 			"jump_cost_level": jump_cost_level,
 			"dash_cd_level": dash_cd_level,
-			"apple_level": apple_level
+			"apple_level": apple_level,
+			"sound_muted": sound_muted
 		}
 		file.store_string(JSON.stringify(data))
 
@@ -59,3 +61,5 @@ func load_data():
 				jump_cost_level = data.get("jump_cost_level", 0)
 				dash_cd_level = data.get("dash_cd_level", 0)
 				apple_level = data.get("apple_level", 0)
+				sound_muted = data.get("sound_muted", false)
+				AudioServer.set_bus_mute(0, sound_muted)
