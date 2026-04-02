@@ -43,7 +43,7 @@ func _process(delta):
 func spawn_obstacle_batch(start_x: float):
 	var obstacle_count = randi_range(1, 2)  # Randomly spawn 1 to 2 obstacles to reduce clutter
 	var player = get_tree().get_first_node_in_group("player")
-	var ground_y = player.floor_y if player else 823.0  # Safe dynamic checking
+	var ground_y = player.floor_y if player else global.FLOOR_Y
 	
 	# Ensure obstacles spawn at a fixed height
 	for i in range(obstacle_count):
@@ -71,9 +71,10 @@ func spawn_obstacle_batch(start_x: float):
 				item = tofu_scene.instantiate()
 			else:
 				item = coin_scene.instantiate()
-				
-			item.position = Vector2(0, -randf_range(50, 120))
-			obstacle.add_child(item)
+
+			# Parent to spawner (not obstacle) so item survives when obstacle is destroyed
+			add_child(item)
+			item.global_position = Vector2(start_x + offset_x, (ground_y + 10) - randf_range(50, 120))
 
 		# Add the obstacle to the scene
 		# Removed duplicate add_child(obstacle)

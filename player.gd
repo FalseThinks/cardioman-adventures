@@ -20,7 +20,7 @@ var is_dashing = false
 var can_double_jump = false
 var is_double_jumping = false 
 var flip_tween: Tween = null
-var floor_y: float = 823.0 # Track actual floor globally
+var floor_y: float = global.FLOOR_Y
 
 # === Stamina & Dash UI ===
 var is_game_over = false
@@ -191,29 +191,6 @@ func _physics_process(delta):
 		trigger_game_over()
 
 
-	# Apply movement and handle collisions
-	var collision = move_and_collide(velocity * delta, true) # Test collision only
-	if collision:
-		var collider = collision.get_collider()
-		if collider is StaticBody2D and collider.has_method("destroy"):
-			var normal = collision.get_normal()
-			
-			# Handle different collision scenarios based on direction and player state
-			if is_dashing:
-				# When dashing, destroy obstacles regardless of direction
-				collider.destroy()
-			elif is_invulnerable:
-				# During invulnerability, only destroy obstacles on LEFT collision (frontal)
-				# Normal.x > 0 means collision from the left
-				if normal.x > 0:
-					collider.destroy()
-			else:
-				# Not dashing or invulnerable, take damage only from frontal collision
-				if normal.x > 0:
-					take_damage()
-					collider.destroy()
-	
-	# Actually move the player
 	move_and_slide()
 
 func take_damage():
@@ -252,8 +229,8 @@ func _on_dash_hitbox_body_entered(body: Node) -> void:
 			body.destroy()
 		else:
 			# Check if collision is from the left side
-			var player_right = global_position.x + $CollisionShape2D.shape.extents.x
-			var obstacle_left = body.global_position.x - body.get_node("CollisionShape2D").shape.extents.x
+			var player_right = global_position.x + $CollisionShape2D.shape.size.x / 2.0
+			var obstacle_left = body.global_position.x - body.get_node("CollisionShape2D").shape.size.x / 2.0
 			var is_frontal_collision = player_right >= obstacle_left and global_position.x < body.global_position.x
 			
 			if is_frontal_collision:

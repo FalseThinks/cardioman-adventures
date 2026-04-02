@@ -5,8 +5,9 @@ var anim_timer = 0.0
 var bob_offset = 0.0
 
 func _ready():
-	# Update heal based on level
 	stamina_heal = 50 + (global.apple_level * 15)
+	if not is_connected("body_entered", _on_body_entered):
+		connect("body_entered", _on_body_entered)
 
 func _process(delta):
 	# Spin through apple animation frames

@@ -1,5 +1,4 @@
 extends Area2D
-signal coin_collected
 
 var anim_timer = 0.0
 
@@ -19,6 +18,5 @@ func _process(delta):
 
 func _on_body_entered(body):
 	if body.is_in_group("player"):
-		emit_signal("coin_collected")
 		global.add_coin()
 		queue_free()

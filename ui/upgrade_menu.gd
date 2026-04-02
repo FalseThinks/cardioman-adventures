@@ -8,13 +8,23 @@ func _ready():
 
 func update_ui():
 	coins_label.text = "Coins: " + str(global.coins)
-	$Panel/VBoxContainer/BtnVelocity.text = "Velocity+ (Lvl " + str(global.velocity_level) + ") - Cost: " + str(get_cost(global.velocity_level))
-	$Panel/VBoxContainer/BtnStamina.text = "Max Stamina+ (Lvl " + str(global.stamina_level) + ") - Cost: " + str(get_cost(global.stamina_level))
-	$Panel/VBoxContainer/BtnDmgRed.text = "Dmg Reduction+ (Lvl " + str(global.dmg_reduction_level) + ") - Cost: " + str(get_cost(global.dmg_reduction_level))
-	$Panel/VBoxContainer/BtnDashCost.text = "Dash Cost- (Lvl " + str(global.dash_cost_level) + ") - Cost: " + str(get_cost(global.dash_cost_level))
-	$Panel/VBoxContainer/BtnJumpCost.text = "Jump Cost- (Lvl " + str(global.jump_cost_level) + ") - Cost: " + str(get_cost(global.jump_cost_level))
-	$Panel/VBoxContainer/BtnDashCD.text = "Dash CD- (Lvl " + str(global.dash_cd_level) + ") - Cost: " + str(get_cost(global.dash_cd_level))
-	$Panel/VBoxContainer/BtnApple.text = "Apple Recovery+ (Lvl " + str(global.apple_level) + ") - Cost: " + str(get_cost(global.apple_level))
+	_set_btn_text($Panel/VBoxContainer/BtnVelocity, "Velocity+", "velocity_level")
+	_set_btn_text($Panel/VBoxContainer/BtnStamina, "Max Stamina+", "stamina_level")
+	_set_btn_text($Panel/VBoxContainer/BtnDmgRed, "Dmg Reduction+", "dmg_reduction_level")
+	_set_btn_text($Panel/VBoxContainer/BtnDashCost, "Dash Cost-", "dash_cost_level")
+	_set_btn_text($Panel/VBoxContainer/BtnJumpCost, "Jump Cost-", "jump_cost_level")
+	_set_btn_text($Panel/VBoxContainer/BtnDashCD, "Dash CD-", "dash_cd_level")
+	_set_btn_text($Panel/VBoxContainer/BtnApple, "Apple Recovery+", "apple_level")
+
+func _set_btn_text(btn: Button, label: String, stat_name: String):
+	var lvl = global.get(stat_name)
+	var max_lvl = global.MAX_LEVELS[stat_name]
+	if lvl >= max_lvl:
+		btn.text = label + " (MAX)"
+		btn.disabled = true
+	else:
+		btn.text = label + " (Lvl " + str(lvl) + ") - Cost: " + str(get_cost(lvl))
+		btn.disabled = false
 
 func get_cost(level: int) -> int:
 	return 10 + (level * 15)
@@ -36,6 +46,8 @@ func _on_BtnApple_pressed():
 
 func try_buy(stat_name: String):
 	var current_level = global.get(stat_name)
+	if current_level >= global.MAX_LEVELS[stat_name]:
+		return
 	var cost = get_cost(current_level)
 	if global.coins >= cost:
 		global.set_coins(global.coins - cost)
